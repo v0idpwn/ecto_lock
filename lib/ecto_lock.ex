@@ -1,6 +1,6 @@
 defmodule EctoLock do
   @moduledoc """
-  Provides helpers for database locking
+  Provides helpers for advisory locks with postgresql
   """
 
   @type repo :: module()

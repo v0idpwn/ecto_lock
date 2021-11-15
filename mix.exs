@@ -7,7 +7,16 @@ defmodule EctoLock.MixProject do
       version: "0.1.0",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      description: "Helpers for advisory locks with postgresql and ecto",
+      package: [
+        name: "ecto_lock",
+        licenses: ["Apache-2.0"],
+        links: %{"GitHub" => "https://github.com/v0idpwn/ecto_lock"}
+      ],
+      name: "EctoLock",
+      source_url: "https://github.com/v0idpwn/ecto_lock",
+      homepage_url: "https://github.com/v0idpwn/ecto_lock"
     ]
   end
 
@@ -23,6 +32,7 @@ defmodule EctoLock.MixProject do
     [
       {:ecto_sql, "~> 3.7"},
       {:postgrex, "~> 0.15"},
+      {:ex_doc, "~> 0.25", only: :docs, runtime: false}
     ]
   end
 end
