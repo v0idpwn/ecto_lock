@@ -3,6 +3,8 @@ defmodule EctoLock do
   Provides helpers for advisory locks with postgresql
   """
 
+  @max_i32 2_147_483_647
+
   @type repo :: module()
   @type key :: integer()
   @type result :: :ok | :error
@@ -12,7 +14,10 @@ defmodule EctoLock do
   @doc """
   Turns a namespace + key tuple into a key
 
-  Expects namespace to be either an atom or binary, and key to be an integer up to 32 bits
+  Expects namespace to be either an atom or binary, and key to be an integer
+
+  If a key with more than 32 bits is given, **collisions between different 
+  namespaces may happen**.
   """
   def tuple_to_key({namespace, int}) when is_atom(namespace),
     do: tuple_to_key({Atom.to_string(namespace), int})
@@ -23,7 +28,9 @@ defmodule EctoLock do
     upper32 = :erlang.crc32(namespace)
     lower32 = int
 
-    (upper32 <<< 32) + lower32
+    key = upper32 <<< 32 ||| lower32
+
+    if upper32 > @max_i32, do: -(key >>> 1), else: key
   end
 
   @doc """

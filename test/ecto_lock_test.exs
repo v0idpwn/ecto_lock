@@ -89,4 +89,12 @@ defmodule EctoLockTest do
     key2 = EctoLock.tuple_to_key({:business, 1})
     assert key2 == key + 1
   end
+
+  test "tuple_to_key/1 can handle uint32 coming from :erlang.crc32" do
+    key =
+      {<<255, 15, 14, 153, 135, 79, 33, 91, 4, 127>>, 1000}
+      |> EctoLock.tuple_to_key()
+
+    assert key < 0
+  end
 end
