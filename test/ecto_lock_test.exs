@@ -97,4 +97,16 @@ defmodule EctoLockTest do
 
     assert key < 0
   end
+
+  test "regression: keep in bounds without losing precision" do
+    # Key is any binary where the MAX_UINT32 > crc32 > MAX_I32
+    # "wins" is an example of such case
+    namespace = "wins"
+
+    Enum.reduce(1..10, [], fn v, keys ->
+      key = EctoLock.tuple_to_key({namespace, v})
+      refute key in keys
+      [key | keys]
+    end)
+  end
 end

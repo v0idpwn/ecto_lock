@@ -3,7 +3,8 @@ defmodule EctoLock do
   Provides helpers for advisory locks with postgresql
   """
 
-  @max_i32 2_147_483_647
+  @max_i32 0b1111111111111111111111111111111
+  @last_bit 0b1000000000000000000000000000000
 
   @type repo :: module()
   @type key :: integer()
@@ -16,7 +17,7 @@ defmodule EctoLock do
 
   Expects namespace to be either an atom or binary, and key to be an integer
 
-  If a key with more than 32 bits is given, **collisions between different 
+  If a key with more than 32 bits is given, **collisions between different
   namespaces may happen**.
   """
   def tuple_to_key({namespace, int}) when is_atom(namespace),
@@ -28,9 +29,12 @@ defmodule EctoLock do
     upper32 = :erlang.crc32(namespace)
     lower32 = int
 
-    key = upper32 <<< 32 ||| lower32
-
-    if upper32 > @max_i32, do: -(key >>> 1), else: key
+    # To mimic uints, we use the signal to represent the last bit
+    if upper32 > @max_i32 do
+      -((upper32 - @last_bit) <<< 32 ||| lower32)
+    else
+      upper32 <<< 32 ||| lower32
+    end
   end
 
   @doc """
