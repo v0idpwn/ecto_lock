@@ -88,6 +88,7 @@ defmodule EctoLockTest do
 
     key2 = EctoLock.tuple_to_key({:business, 1})
     assert key2 == key + 1
+    assert in_key_range?(key)
   end
 
   test "tuple_to_key/1 can handle uint32 coming from :erlang.crc32" do
@@ -96,6 +97,7 @@ defmodule EctoLockTest do
       |> EctoLock.tuple_to_key()
 
     assert key < 0
+    assert in_key_range?(key)
   end
 
   test "regression: keep in bounds without losing precision" do
@@ -106,7 +108,18 @@ defmodule EctoLockTest do
     Enum.reduce(1..10, [], fn v, keys ->
       key = EctoLock.tuple_to_key({namespace, v})
       refute key in keys
+      assert in_key_range?(key)
       [key | keys]
     end)
+  end
+
+  test "regression: no overflow" do
+    # Sample key that caused overflow
+    key = EctoLock.tuple_to_key({"uc", 1})
+    assert in_key_range?(key)
+  end
+
+  defp in_key_range?(key) do
+    key in -9_223_372_036_854_775_808..9_223_372_036_854_775_807
   end
 end

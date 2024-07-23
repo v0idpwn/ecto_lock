@@ -4,7 +4,7 @@ defmodule EctoLock do
   """
 
   @max_i32 0b1111111111111111111111111111111
-  @last_bit 0b1000000000000000000000000000000
+  @u32_last_bit 0b10000000000000000000000000000000
 
   @type repo :: module()
   @type key :: integer()
@@ -31,7 +31,7 @@ defmodule EctoLock do
 
     # To mimic uints, we use the signal to represent the last bit
     if upper32 > @max_i32 do
-      -((upper32 - @last_bit) <<< 32 ||| lower32)
+      -((upper32 - @u32_last_bit) <<< 32 ||| lower32)
     else
       upper32 <<< 32 ||| lower32
     end
