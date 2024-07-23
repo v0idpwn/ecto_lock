@@ -30,7 +30,7 @@ defmodule EctoLock.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ecto_sql, "~> 3.7"},
+      {:ecto_sql, "~> 3.8"},
       {:postgrex, "~> 0.15"},
       {:ex_doc, "~> 0.25", only: :docs, runtime: false}
     ]
